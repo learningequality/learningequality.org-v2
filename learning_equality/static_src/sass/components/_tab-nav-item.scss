@@ -1,0 +1,16 @@
+.tab-nav-item {
+    margin-right: 25px;
+    position: relative;
+    white-space: nowrap;
+    color: $color--black;
+
+    &:last-child {
+        padding-right: 20px;
+    }
+
+    &:hover,
+    &:focus,
+    &--active {
+        color: $color--primary;
+    }
+}

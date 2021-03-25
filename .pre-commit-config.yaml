@@ -1,0 +1,59 @@
+repos:
+  - repo: https://github.com/python/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        language_version: python3.8
+        exclude: migrations/
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.7.0
+    hooks:
+      - id: isort
+        language_version: python3.8
+  - repo: https://gitlab.com/pycqa/flake8
+    # flake8 config is in setup.cfg
+    rev: 3.8.3
+    hooks:
+      - id: flake8
+        language_version: python3.8
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v6.5.1
+    hooks:
+      - id: eslint
+        additional_dependencies:
+          - eslint@6.5.1
+          - eslint-config-airbnb-base@14.0.0
+          - eslint-config-airbnb@18.0.1
+          - eslint-config-prettier@6.4.0
+          - eslint-config-torchbox@0.3.1
+          - eslint-plugin-import@2.18.2
+          - eslint-plugin-jsx-a11y@6.2.3
+          - eslint-plugin-react@7.16.0
+          - eslint-plugin-react-hooks@1.7.0
+          - '@babel/core@7.5.0'
+          - '@babel/preset-env@7.5.0'
+          - '@babel/preset-react@7.0.0'
+          - babel-eslint@10.0.2
+  - repo: https://github.com/prettier/prettier
+    rev: 2.0.5
+    hooks:
+      - id: prettier
+        args: ['--check', '**/?(.)*.{md,css,scss,js,json,yaml,yml}']
+  - repo: https://github.com/awebdeveloper/pre-commit-stylelint
+    rev: c4c991cd38b0218735858716b09924f8b20e3812
+    hooks:
+      - id: stylelint
+        additional_dependencies:
+          - stylelint@10.1.0
+          - stylelint-config-torchbox@0.5.0
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v0.14.3
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: >
+          (?x)^(
+              .*/tests/.*|
+              package-lock.json|
+              poetry.lock
+          )$

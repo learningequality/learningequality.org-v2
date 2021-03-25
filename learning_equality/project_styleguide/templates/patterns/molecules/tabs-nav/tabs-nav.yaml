@@ -1,0 +1,9 @@
+context:
+  title: Tabs
+  item:
+    - tab:
+      title: Tab 1
+    - tab:
+      title: Tab 2
+    - tab:
+      title: Tab 3

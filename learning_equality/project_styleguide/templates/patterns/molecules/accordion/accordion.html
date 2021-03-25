@@ -1,0 +1,28 @@
+{% load wagtailcore_tags %}
+<div class="accordion__container">
+    {% for accordion in accordions %}
+        <div class="accordion" data-accordion>
+            <h2 class="accordion__header">
+                <button
+                    id="question-{{ forloop.counter }}"
+                    class="accordion__button"
+                    data-accordion-question
+                    aria-controls="answer-{{ forloop.counter }}"
+                    aria-expanded="false">
+                    {% include "patterns/atoms/icons/icon.html" with name="arrow" classname="accordion__icon" %}
+                    <span class="accordion__title">
+                        {{ accordion.title }}
+                    </span>
+                </button>
+            </h2>
+            <div
+                id="answer-{{ forloop.counter }}"
+                data-accordion-answer
+                class="accordion__content"
+                aria-labelledby="question-{{ forloop.counter }}"
+                aria-hidden="true">
+                {{ accordion.content|richtext }}
+            </div>
+        </div>
+    {% endfor %}
+</div>

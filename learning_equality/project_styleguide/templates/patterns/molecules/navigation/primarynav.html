@@ -1,0 +1,29 @@
+{% load wagtailcore_tags %}
+<nav aria-label="Primary">
+     <ul class="primary-nav" data-primary-nav>
+        {% for link in primarynav %}
+            {% with children=link.value.page.get_children.live.public.in_menu %}
+                <li
+                    class="primary-nav__item {% if children.exists %}primary-nav__item--is-parent{% endif %}"
+                    {% if children.exists %}data-has-subnav{% endif %}
+                >
+                    {% include_block link with has_children=children.exists nav_type="primary-nav" %}
+                    {% if children.exists %}
+                        <ul class="sub-nav" data-subnav>
+                            <li class="sub-nav__item sub-nav__item--back"><a data-subnav-back href="#">&lsaquo; Back</a></li>
+                            {% comment %}
+                            The overview_title is passed through to the menu item and displayed after the page title if present. It allows for a link to the index page in the dropdown desktop menu because a click on the parent item simply opens and closes the menu drop-down.
+                            {% endcomment %}
+                            <li class="sub-nav__item">{% include_block link with nav_type="sub-nav" overview_title="overview" %}</li>
+                            {% for child in children.all %}
+                                <li class="sub-nav__item sub-nav__item--secondary">
+                                    {% include "patterns/molecules/navigation/includes/menu_item.html" with page=child nav_type="sub-nav" %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endwith %}
+        {% endfor %}
+    </ul>
+</nav>

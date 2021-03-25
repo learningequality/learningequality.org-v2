@@ -1,0 +1,36 @@
+.video-modal {
+    @include z-index(modal);
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+
+    &.open {
+        display: block;
+    }
+
+    &__container {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 90%;
+        margin: 0 auto;
+
+        @include media-query(medium) {
+            width: 56%;
+            max-width: 800px;
+        }
+    }
+
+    &__close {
+        @include z-index(modal-controls);
+        position: absolute;
+        display: inline-block;
+        top: $grid;
+        right: $grid;
+    }
+}

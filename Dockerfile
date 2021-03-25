@@ -1,50 +1,93 @@
-# Use an official Python runtime based on Debian 10 "buster" as a parent image.
-FROM python:3.8.1-slim-buster
+FROM node:14 as frontend
 
-# Add user that will be used in the container.
-RUN useradd wagtail
+# Make build & post-install scripts behave as if we were in a CI environment (e.g. for logging verbosity purposes).
+ARG CI=true
 
-# Port used by this container to serve HTTP.
-EXPOSE 8000
+# Install front-end dependencies.
+COPY package.json package-lock.json .babelrc.js webpack.config.js ./
+RUN npm ci --no-optional --no-audit --progress=false
 
-# Set environment variables.
-# 1. Force Python stdout and stderr streams to be unbuffered.
-# 2. Set PORT variable that is used by Gunicorn. This should match "EXPOSE"
-#    command.
-ENV PYTHONUNBUFFERED=1 \
-    PORT=8000
+# Compile static files
+COPY ./learning_equality/static_src/ ./learning_equality/static_src/
+RUN npm run build:prod
 
-# Install the application server.
-RUN pip install "gunicorn==20.0.4"
 
-# Install the project requirements.
-COPY requirements.txt /
-RUN pip install -r /requirements.txt
+# We use Debian images because they are considered more stable than the alpine
+# ones becase they use a different C compiler. Debian images also come with
+# all useful packages required for image manipulation out of the box. They
+# however weight a lot, approx. up to 1.5GiB per built image.
+FROM python:3.8-buster as backend
 
-# Use /app folder as a directory where the source code is stored.
+ARG POETRY_HOME=/opt/poetry
+ARG POETRY_VERSION=1.1.4
+
+RUN useradd learning_equality -m && mkdir /app && chown learning_equality /app
+
 WORKDIR /app
 
-# Set this directory to be owned by the "wagtail" user. This Wagtail project
-# uses SQLite, the folder needs to be owned by the user that
-# will be writing to the database file.
-RUN chown wagtail:wagtail /app
+# Set default environment variables. They are used at build time and runtime.
+# If you specify your own environment variables on Heroku or Dokku, they will
+# override the ones set here. The ones below serve as sane defaults only.
+#  * PATH - Make sure that Poetry is on the PATH
+#  * PYTHONUNBUFFERED - This is useful so Python does not hold any messages
+#    from being output.
+#    https://docs.python.org/3.8/using/cmdline.html#envvar-PYTHONUNBUFFERED
+#    https://docs.python.org/3.8/using/cmdline.html#cmdoption-u
+#  * PYTHONPATH - enables use of django-admin command.
+#  * DJANGO_SETTINGS_MODULE - default settings used in the container.
+#  * PORT - default port used. Please match with EXPOSE so it works on Dokku.
+#    Heroku will ignore EXPOSE and only set PORT variable. PORT variable is
+#    read/used by Gunicorn.
+#  * WEB_CONCURRENCY - number of workers used by Gunicorn. The variable is
+#    read by Gunicorn.
+#  * GUNICORN_CMD_ARGS - additional arguments to be passed to Gunicorn. This
+#    variable is read by Gunicorn
+ENV PATH=$PATH:${POETRY_HOME}/bin \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app \
+    DJANGO_SETTINGS_MODULE=learning_equality.settings.production \
+    PORT=8000 \
+    WEB_CONCURRENCY=3 \
+    GUNICORN_CMD_ARGS="-c gunicorn-conf.py --max-requests 1200 --max-requests-jitter 50 --access-logfile - --timeout 25"
 
-# Copy the source code of the project into the container.
-COPY --chown=wagtail:wagtail . .
+ARG BUILD_ENV
 
-# Use user "wagtail" to run the build commands below and the server itself.
-USER wagtail
+# Make $BUILD_ENV available at runtime
+ENV BUILD_ENV=${BUILD_ENV}
 
-# Collect static files.
-RUN python manage.py collectstatic --noinput --clear
+# Port exposed by this container. Should default to the port used by your WSGI
+# server (Gunicorn). This is read by Dokku only. Heroku will ignore this.
+EXPOSE 8000
 
-# Runtime command that executes when "docker run" is called, it does the
-# following:
-#   1. Migrate the database.
-#   2. Start the application server.
-# WARNING:
-#   Migrating database at the same time as starting the server IS NOT THE BEST
-#   PRACTICE. The database should be migrated manually or using the release
-#   phase facilities of your hosting platform. This is used only so the
-#   Wagtail instance can be started with a simple "docker run" command.
-CMD set -xe; python manage.py migrate --noinput; gunicorn learning_equality.wsgi:application
+# Install poetry using the installer (keeps Poetry's dependencies isolated from the app's)
+RUN wget https://raw.githubusercontent.com/python-poetry/poetry/${POETRY_VERSION}/get-poetry.py && \
+    echo "eedf0fe5a31e5bb899efa581cbe4df59af02ea5f get-poetry.py" | sha1sum -c - && \
+    python get-poetry.py && \
+    rm get-poetry.py && \
+    poetry config virtualenvs.create false
+
+# Install your app's Python requirements.
+COPY --chown=learning_equality pyproject.toml poetry.lock ./
+RUN if [ "$BUILD_ENV" = "dev" ]; then poetry install --extras gunicorn; else poetry install --no-dev --extras gunicorn; fi
+
+COPY --chown=learning_equality --from=frontend ./learning_equality/static_compiled ./learning_equality/static_compiled
+
+# Copy application code.
+COPY --chown=learning_equality . .
+
+# Collect static. This command will move static files from application
+# directories and "static_compiled" folder to the main static directory that
+# will be served by the WSGI server.
+RUN SECRET_KEY=none python manage.py collectstatic --noinput --clear
+
+# Load shortcuts
+COPY ./docker/bashrc.sh /home/learning_equality/.bashrc
+
+# Don't use the root user as it's an anti-pattern and Heroku does not run
+# containers as root either.
+# https://devcenter.heroku.com/articles/container-registry-and-runtime#dockerfile-commands-and-runtime
+USER learning_equality
+
+# Run the WSGI server. It reads GUNICORN_CMD_ARGS, PORT and WEB_CONCURRENCY
+# environment variable hence we don't specify a lot options below.
+CMD gunicorn learning_equality.wsgi:application

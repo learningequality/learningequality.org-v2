@@ -1,0 +1,21 @@
+{% extends "patterns/base_page.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+<div class="wrapper wrapper--small">
+
+    <h1>{{ page.title }}</h1>
+    <p>{{ page.display_date }}</p>
+    <p>{{ page.introduction }}</p>
+
+    <div class="main-body">
+        {% include_block page.body %}
+    </div>
+
+    {% include "patterns/molecules/share/share.html" %}
+
+</div>
+
+{% include "patterns/molecules/relatedcontent/relatedcontent.html" with related_documents=page.related_documents.all related_pages=page.related_pages.all %}
+
+{% endblock %}

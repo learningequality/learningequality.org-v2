@@ -1,0 +1,17 @@
+context:
+  tabs:
+    - tab:
+      title: Tab 1
+      content: <p>Test one</p>
+    - tab:
+      title: Tab 2
+      content: <p>Test two</p>
+    - tab:
+      title: Tab 3
+      content: <p>Test three</p>
+    - tab:
+      title: Tab 4
+      content: <p>Test four</p>
+    - tab:
+      title: Tab 5
+      content: <p>Test five </p>

@@ -1,23 +1,24 @@
-# Django project
-/media/
-/static/
-*.sqlite3
+/learning_equality/static_compiled
+/learning_equality/settings/local.py
 
-# Python and others
-__pycache__
+/Dockerfile
+/docker/Dockerfile*
+
+.git
+**/__pycache__
 *.pyc
 .DS_Store
 *.swp
 /venv/
+/static/
+/media/
 /tmp/
 /.vagrant/
 /Vagrantfile.local
 node_modules/
+coverage
 /npm-debug.log
 /.idea/
-.vscode
-coverage
-.python-version
 
 # Distribution / packaging
 .Python

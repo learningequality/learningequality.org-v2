@@ -1,0 +1,12 @@
+context:
+  value:
+    heading: Column heading
+    links:
+      - dummy
+      - dummy
+      - dummy
+
+tags:
+  include_block:
+    'item with nav_type="footercolumn-nav"':
+      template_name: 'patterns/molecules/navigation/blocks/menu_item.html'

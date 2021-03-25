@@ -1,0 +1,69 @@
+.accordion {
+    $root: &;
+
+    &.is-open {
+        #{$root}__icon {
+            transform: rotate(90deg);
+        }
+
+        #{$root}__button {
+            margin-bottom: 10px;
+        }
+
+        #{$root}__content {
+            display: block;
+        }
+    }
+
+    &__button {
+        background: none;
+        border: 0;
+        border-bottom: 1px solid $color--border;
+        display: flex;
+        align-items: center;
+        padding: 10px 5px;
+        transition: color 0.2s ease;
+        text-decoration: none;
+        width: 100%;
+
+        &:hover {
+            cursor: pointer;
+            color: $color--off-black;
+        }
+
+        /* stylelint-disable */
+        &:focus {
+            outline: 0; // focus style implemented directly on text instead
+        }
+        /* stylelint-enable */
+    }
+
+    &__header {
+        margin: 0;
+        padding: 0;
+    }
+
+    &__title {
+        margin: 0;
+        padding: 0;
+
+        #{$root}__button:focus & {
+            background-color: $color--off-black;
+            color: $color--white;
+        }
+    }
+
+    &__icon {
+        width: 25px;
+        height: 25px;
+        margin-right: 20px;
+        transition: transform, fill, 0.2s ease;
+        fill: $color--primary;
+    }
+
+    &__content {
+        display: none;
+        margin-bottom: 10px;
+        margin-top: 15px;
+    }
+}
