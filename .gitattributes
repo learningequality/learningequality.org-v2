@@ -1,5 +1,0 @@
-# Configure GitLab to use the JSX parser for all .js files.
-# https://docs.gitlab.com/ee/user/project/highlighting.html
-*.js gitlab-language=jsx
-# For .html files, we want the Jinja syntax highlighting, closest to Django templates.
-*.html gitlab-language=jinja
