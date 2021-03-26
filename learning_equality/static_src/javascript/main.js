@@ -1,8 +1,4 @@
 import '@babel/polyfill';
-/* feature:use_react */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import TestReact from './components/TestReact';
 import MobileMenu from './components/mobile-menu';
 import MobileSubMenu from './components/mobile-sub-menu';
 import DesktopSubMenu from './components/desktop-sub-menu';
@@ -82,11 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (const skiplink of document.querySelectorAll(SkipLink.selector())) {
         new SkipLink(skiplink);
-    } // Test react - add a div with a data attribute of `data-test-react` to test
-
-    /* feature:use_react */
-    // Test react - add a div with a data attribute of `data-test-react` to test
-    for (const element of document.querySelectorAll('[data-test-react]')) {
-        ReactDOM.render(<TestReact greeting="boo!" />, element);
     }
+
+
 });
