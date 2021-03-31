@@ -159,8 +159,6 @@ DATABASES = {
 # order to use database cache backend you need to run
 # "django-admin createcachetable" to create a table for the cache.
 #
-# On platforms like Heroku which automatically set the REDIS_URL environment
-# variable, the value is usually set to not use TLS.
 # Setting the `REDIS_FORCE_TLS` environment variable to True will replace redis://
 # in the connection string with rediss://, enabling connectionst to redis over TLS.
 #
@@ -271,8 +269,6 @@ MEDIA_ROOT = env.get("MEDIA_DIR", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = env.get("MEDIA_URL", "/media/")
 
 # AWS S3 buckets configuration
-# This is media files storage backend configuration. S3 is our preferred file
-# storage solution.
 # To enable this storage backend we use django-storages package...
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html
 # ...that uses AWS' boto3 library.
@@ -327,7 +323,7 @@ if "AWS_STORAGE_BUCKET_NAME" in env:
 
 # Logging
 # This logging is configured to be used with Sentry and console logs. Console
-# logs are widely used by platforms offering Docker deployments, e.g. Heroku.
+# logs are widely used by platforms offering Docker deployments
 # We use Sentry to only send error logs so we're notified about errors that are
 # not Python exceptions.
 # We do not use default mail or file handlers because they are of no use for
@@ -420,8 +416,6 @@ if "SERVER_EMAIL" in env:
 
 
 # Sentry configuration.
-# See instructions on the intranet:
-# https://intranet.torchbox.com/delivering-projects/tech/starting-new-project/#sentry
 is_in_shell = len(sys.argv) > 1 and sys.argv[1] in ["shell", "shell_plus"]
 
 if "SENTRY_DSN" in env and not is_in_shell:
@@ -437,8 +431,6 @@ if "SENTRY_DSN" in env and not is_in_shell:
 
     # There's a chooser to toggle between environments at the top right corner on sentry.io
     # Values are typically 'staging' or 'production' but can be set to anything else if needed.
-    # dokku config:set gosh SENTRY_ENVIRONMENT=staging
-    # heroku config:set SENTRY_ENVIRONMENT=production
     if "SENTRY_ENVIRONMENT" in env:
         sentry_kwargs.update({"environment": env["SENTRY_ENVIRONMENT"]})
 
@@ -446,17 +438,10 @@ if "SENTRY_DSN" in env and not is_in_shell:
     if release is None:
         try:
             # But if it's not, we assume that the commit hash is available in
-            # the GIT_REV environment variable. It's a default environment
-            # variable used on Dokku:
-            # http://dokku.viewdocs.io/dokku/deployment/methods/git/#configuring-the-git_rev-environment-variable
+            # the GIT_REV environment variable.
             release = env["GIT_REV"]
         except KeyError:
-            try:
-                # Assume this is a Heroku-hosted app with the "runtime-dyno-metadata" lab enabled
-                release = env["HEROKU_RELEASE_VERSION"]
-            except KeyError:
-                # If there's no commit hash, we do not set a specific release.
-                release = None
+            release = None
 
     sentry_kwargs.update({"release": release})
     sentry_sdk.init(**sentry_kwargs)
@@ -532,10 +517,6 @@ CACHE_CONTROL_STALE_WHILE_REVALIDATE = int(
     env.get("CACHE_CONTROL_STALE_WHILE_REVALIDATE", 30)
 )
 
-
-# Required to get e.g. wagtail-sharing working on Heroku and probably many other platforms.
-# https://docs.djangoproject.com/en/stable/ref/settings/#use-x-forwarded-port
-USE_X_FORWARDED_PORT = env.get("USE_X_FORWARDED_PORT", "true").lower().strip() == "true"
 
 # Security configuration
 # This configuration is required to achieve good security rating.

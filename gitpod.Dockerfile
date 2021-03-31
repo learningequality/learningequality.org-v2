@@ -13,7 +13,7 @@ ARG POETRY_HOME=${HOME}/.poetry
 ARG POETRY_VERSION=1.1.4
 
 # Set default environment variables. They are used at build time and runtime.
-# If you specify your own environment variables on Heroku or Dokku, they will
+# If you specify your own environment variables elsewhere, they will
 # override the ones set here. The ones below serve as sane defaults only.
 #  * PATH - Make sure that Poetry is on the PATH
 #  * PYTHONUNBUFFERED - This is useful so Python does not hold any messages
@@ -31,7 +31,7 @@ ENV PATH=$PATH:${POETRY_HOME}/bin \
 
 
 # Port exposed by this container. Should default to the port used by your WSGI
-# server (Gunicorn). This is read by Dokku only. Heroku will ignore this.
+# server (Gunicorn).
 EXPOSE 8080
 
 USER gitpod

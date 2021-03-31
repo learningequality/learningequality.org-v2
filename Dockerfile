@@ -26,7 +26,7 @@ RUN useradd learning_equality -m && mkdir /app && chown learning_equality /app
 WORKDIR /app
 
 # Set default environment variables. They are used at build time and runtime.
-# If you specify your own environment variables on Heroku or Dokku, they will
+# If you specify your own environment variables elsewhere, they will
 # override the ones set here. The ones below serve as sane defaults only.
 #  * PATH - Make sure that Poetry is on the PATH
 #  * PYTHONUNBUFFERED - This is useful so Python does not hold any messages
@@ -35,8 +35,7 @@ WORKDIR /app
 #    https://docs.python.org/3.8/using/cmdline.html#cmdoption-u
 #  * PYTHONPATH - enables use of django-admin command.
 #  * DJANGO_SETTINGS_MODULE - default settings used in the container.
-#  * PORT - default port used. Please match with EXPOSE so it works on Dokku.
-#    Heroku will ignore EXPOSE and only set PORT variable. PORT variable is
+#  * PORT - PORT variable is
 #    read/used by Gunicorn.
 #  * WEB_CONCURRENCY - number of workers used by Gunicorn. The variable is
 #    read by Gunicorn.
@@ -56,7 +55,7 @@ ARG BUILD_ENV
 ENV BUILD_ENV=${BUILD_ENV}
 
 # Port exposed by this container. Should default to the port used by your WSGI
-# server (Gunicorn). This is read by Dokku only. Heroku will ignore this.
+# server (Gunicorn).
 EXPOSE 8000
 
 # Install poetry using the installer (keeps Poetry's dependencies isolated from the app's)
@@ -83,9 +82,7 @@ RUN SECRET_KEY=none python manage.py collectstatic --noinput --clear
 # Load shortcuts
 COPY ./docker/bashrc.sh /home/learning_equality/.bashrc
 
-# Don't use the root user as it's an anti-pattern and Heroku does not run
-# containers as root either.
-# https://devcenter.heroku.com/articles/container-registry-and-runtime#dockerfile-commands-and-runtime
+# Don't use the root user as it's an anti-pattern
 USER learning_equality
 
 # Run the WSGI server. It reads GUNICORN_CMD_ARGS, PORT and WEB_CONCURRENCY
