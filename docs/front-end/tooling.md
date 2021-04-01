@@ -31,7 +31,6 @@ Remember to then commit the updated `package-lock.json`.
 - CSS linting with `stylelint`
 - JS linting with `eslint`
 - [Jest](https://jestjs.io/) for JavaScript unit tests.
-- React support
 
 ## Developing with it
 
@@ -66,10 +65,6 @@ To test production, minified and vendor prefixed assets you can use
 
 - `npm run debug` To develop with a simple http server, no browsersync and production assets
 
-## React support
-
-You can test that compilation of react is working by uncommenting the relevant lines in `javascript/main.js` and `javascript/components/test-react.js`. If you don't need react in your project, make sure you don't uncomment these lines or remove them completely. This will help to keep the compiled js file size down.
-
 ## Third party libraries
 
 We no longer have a 'vendor' folder for these. Instead find ones that are packaged as npm libraries and install them as dependencies (see 'using npm' above). If they have CSS that needs including, this can be imported directly from the node_modules folder - see the example for glide in main.scss.
@@ -81,7 +76,7 @@ There is a folder inside `images` called `cssBackgrounds` where you should place
 ## Further details of the packages included
 
 - **autoprefixer** - adds vendor prefixes as necessary for the browsers defined in `browserslist` in the npm config https://www.npmjs.com/package/autoprefixer
-- **babel-core** - transpiler for es6 / react https://www.npmjs.com/package/babel-core
+- **babel-core** - transpiler for es6 https://www.npmjs.com/package/babel-core
 - **babel-eslint** - add-on for extra linting of experimental features (may not be necessary for all projects) https://www.npmjs.com/package/babel-eslint
 - **babel-jest** - use Babel with Jest https://jestjs.io/docs/en/getting-started#using-babel
 - **babel-loader** - use babel with webpack - https://www.npmjs.com/package/babel-loader
@@ -107,9 +102,3 @@ There is a folder inside `images` called `cssBackgrounds` where you should place
 - **url-loader** - Used to inline background images that are smaller than 1024 bytes into the CSS
 - **webpack** - Bundler for js files (can do much more too) - https://www.npmjs.com/package/webpack https://webpack.js.org/concepts/
 - **webpack-cli** - The webpack command calls this behind the scenese (as of webpack v 4) https://www.npmjs.com/package/webpack-cli
-
-## React specific packages
-
-- **babel-polyfill** - IE11 fallbacks for some js functions https://www.npmjs.com/package/babel-polyfill
-- **babel-preset-react** - babel preset for react. https://www.npmjs.com/package/babel-preset-react https://babeljs.io/env/ https://babeljs.io/docs/plugins/
-- **eslint-plugin-react** - linting for react and jsx https://www.npmjs.com/package/eslint-plugin-react
