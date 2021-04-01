@@ -1,0 +1,29 @@
+// Doesn't work in IE11, this is a progressive enhancement
+.progress-bar {
+    --scroll: 0%;
+    @include z-index(header);
+    background: linear-gradient(
+        to right,
+        $color--primary var(--scroll),
+        transparent 0
+    );
+    position: fixed;
+    width: 100%;
+    height: 7px;
+    top: 0;
+    left: 0;
+    border: 0;
+
+    &::-webkit-progress-bar {
+        background-color: transparent;
+    }
+
+    &::-moz-progress-bar {
+        background-color: transparent;
+    }
+
+    // Hide from IE11
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        display: none;
+    }
+}

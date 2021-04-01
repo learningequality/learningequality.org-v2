@@ -1,22 +1,30 @@
+from django.apps import apps
 from django.conf import settings
-from django.urls import include, path
 from django.contrib import admin
-
+from django.urls import include, path
+from django.views.decorators.vary import vary_on_headers
+from django.views.generic import TemplateView
 from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
+from wagtail.utils.urlpatterns import decorate_urlpatterns
 
 from learning_equality.search import views as search_views
+from learning_equality.utils.cache import get_default_cache_control_decorator
 
-urlpatterns = [
-    path('django-admin/', admin.site.urls),
-
-    path('admin/', include(wagtailadmin_urls)),
-    path('documents/', include(wagtaildocs_urls)),
-
-    path('search/', search_views.search, name='search'),
-
+# Private URLs are not meant to be cached.
+private_urlpatterns = [
+    path("django-admin/", admin.site.urls),
+    path("admin/", include(wagtailadmin_urls)),
+    path("documents/", include(wagtaildocs_urls)),
+    # Search cache-control headers are set on the view itself.
+    path("search/", search_views.search, name="search"),
 ]
+
+
+# Public URLs that are meant to be cached.
+urlpatterns = [path("sitemap.xml", sitemap)]
 
 
 if settings.DEBUG:
@@ -27,13 +35,61 @@ if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns = urlpatterns + [
-    # For anything not caught by a more specific rule above, hand over to
-    # Wagtail's page serving mechanism. This should be the last pattern in
-    # the list:
-    path("", include(wagtail_urls)),
+    urlpatterns += [
+        # Add views for testing 404 and 500 templates
+        path(
+            "test404/",
+            TemplateView.as_view(template_name="patterns/pages/errors/404.html"),
+        ),
+        path(
+            "test500/",
+            TemplateView.as_view(template_name="patterns/pages/errors/500.html"),
+        ),
+    ]
 
-    # Alternatively, if you want Wagtail pages to be served from a subpath
-    # of your site, rather than the site root:
-    #    path("pages/", include(wagtail_urls)),
-]
+    # Try to install the django debug toolbar, if exists
+    if apps.is_installed("debug_toolbar"):
+        import debug_toolbar
+
+        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
+
+
+# Style guide
+if getattr(settings, "PATTERN_LIBRARY_ENABLED", False) and apps.is_installed(
+    "pattern_library"
+):
+    from learning_equality.project_styleguide.views import example_form
+
+    private_urlpatterns += [
+        path("pattern-library/example-form/", example_form),
+        path("pattern-library/", include("pattern_library.urls")),
+    ]
+
+
+# Set public URLs to use the "default" cache settings.
+urlpatterns = decorate_urlpatterns(urlpatterns, get_default_cache_control_decorator())
+
+# Set vary header to instruct cache to serve different version on different
+# cookies, different request method (e.g. AJAX) and different protocol
+# (http vs https).
+urlpatterns = decorate_urlpatterns(
+    urlpatterns,
+    vary_on_headers(
+        "Cookie", "X-Requested-With", "X-Forwarded-Proto", "Accept-Encoding"
+    ),
+)
+
+# Join private and public URLs.
+urlpatterns = (
+    private_urlpatterns
+    + urlpatterns
+    + [
+        # Add Wagtail URLs at the end.
+        # Wagtail cache-control is set on the page models's serve methods.
+        path("", include(wagtail_urls))
+    ]
+)
+
+# Error handlers
+handler404 = "learning_equality.utils.views.page_not_found"
+handler500 = "learning_equality.utils.views.server_error"

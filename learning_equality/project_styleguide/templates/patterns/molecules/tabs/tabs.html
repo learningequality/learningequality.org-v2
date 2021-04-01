@@ -1,0 +1,10 @@
+<div class="tabs" data-tab-set>
+    {% include "patterns/molecules/tabs-nav/tabs-nav.html" with item=tabs %}
+
+    {% for item in tabs %}
+        <div class="tabs__panel {% if not forloop.counter == 1 %}tabs__panel--hidden{% endif %}" id="tab-{{ item.title|slugify }}" role="tabpanel" aria-labelledby="{{ item.title|slugify }}" data-tab-panel>
+            {{ item.content }}
+        </div>
+    {% endfor %}
+
+</div>

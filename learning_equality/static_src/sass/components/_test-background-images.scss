@@ -1,0 +1,12 @@
+// demo how the tooling handles background images
+.test-background-images {
+    // Files that are greater than 1024 bytes will be kept as separate files
+    &__large {
+        background-image: url('../images/cssBackgrounds/large-file.svg');
+    }
+
+    // Files that are less than 1024 bytes will be automatically encoded in the css.
+    &__small {
+        background-image: url('../images/cssBackgrounds/small-file.svg');
+    }
+}

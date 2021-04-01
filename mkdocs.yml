@@ -1,0 +1,32 @@
+site_name: Learning Equality Website
+repo_url: https://github.com/learningequality/learningequality.org-v2
+site_url:
+edit_uri: 'edit/master/docs/'
+
+repo_name: Gitlab
+dev_addr: 0.0.0.0:8001
+theme:
+  name: material
+  font: false
+markdown_extensions:
+  - codehilite
+  - admonition
+  - sane_lists
+  - toc:
+      permalink: true
+  # pymdown-extensions meant to bring the Markdown implementation closer to GFM.
+  - pymdownx.details
+  - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+nav:
+  - 'Home': 'index.md'
+  - 'Infrastructure': 'infrastructure.md'
+  - 'Project conventions': 'project_conventions.md'
+  - 'Front-end':
+      - 'Tooling': '/front-end/tooling.md'
+      - 'Form overrides': '/front-end/form-overrides.md'
+      - 'Placeholder images': '/front-end/placeholder_images.md'
+  - 'Continuous integration': 'continuous-integration.md'

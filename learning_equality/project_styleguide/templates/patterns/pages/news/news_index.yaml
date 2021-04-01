@@ -1,0 +1,28 @@
+context:
+  page:
+    title: News
+  news:
+    - title: Page title 1
+      introduction: Intro 1
+      listing_image: dummy
+      listing_title: Item title 1
+      listing_summary: Some listing summary 1
+      display_date: 1 Oct 1970
+    - title: Page title 2
+      introduction: Intro 2
+      listing_image: dummy
+      listing_title: Item title 2
+      listing_summary: Some listing summary 2
+      display_date: 1 Oct 1970
+  news_types:
+    - ['press_release', 'Press Release']
+    - ['media_coverage', 'Media coverage']
+
+tags:
+  pageurl:
+    'n':
+      raw: '#'
+  image:
+    n.listing_image fill-450x300:
+      raw: |
+        <img src="https://source.unsplash.com/450x300?news" width="450" height="300" alt="Some alt">

@@ -1,0 +1,12 @@
+<div
+    class="tabs-nav {{ modifier }}"
+    aria-label="{{ title }}"
+>
+    <div class="tabs-nav__layout grid">
+        <div class="tabs-nav__container" role="tablist" aria-label="Tabs">
+            {% for tab in item %}
+                {% include "patterns/atoms/tab-nav-item/tab-nav-item.html" with item=tab %}
+            {% endfor %}
+        </div>
+    </div>
+</div>

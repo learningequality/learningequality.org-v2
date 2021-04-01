@@ -1,0 +1,11 @@
+<a
+    id="{{ item.title|slugify }}"
+    class="tab-nav-item {% if forloop.counter == 1 %}tab-nav-item--active{% endif %}"
+    href="#tab-{{ item.title|slugify }}"
+    role="tab"
+    aria-controls="{{ item.title|slugify }}"
+    data-tab="tab-{{ item.title|slugify }}"
+    aria-selected="{% if forloop.counter == 1 %}true{% else %}false{% endif %}"
+    >
+    {{ item.title }}
+</a>

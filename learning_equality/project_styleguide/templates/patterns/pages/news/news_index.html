@@ -1,0 +1,48 @@
+{% extends "patterns/base_page.html" %}
+{% load wagtailcore_tags wagtailimages_tags static %}
+
+{% block content %}
+<div class="wrapper wrapper--flex">
+    <div class="sidebar sidebar--filters">
+        <form method="GET">
+            <label for="news_type" class="u-sr-only">News type filter</label>
+            <select id="news_type" name="news_type">
+                <option value="">All</option>
+                {% for news_type in news_types %}
+                    <option value="{{ news_type.0 }}" {% if request.GET.news_type == news_type.0|slugify %}selected="selected"{% endif %}>{{ news_type.1 }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Filter">
+        </form>
+    </div>
+    <div class="section section--main">
+        <h1>{{ page.title }}</h1>
+
+        {% if news %}
+            <ul>
+                {% for n in news %}
+                    <li>
+                        <a href="{% pageurl n %}">
+                            {% if n.listing_image %}
+                                {% image n.listing_image fill-450x300 %}
+                            {% endif %}
+                            <div>
+                                <h2>
+                                    {% firstof n.listing_title n.title %}
+                                </h2>
+                                <span>{{ n.display_date }}</span>
+                                {% if n.listing_summary or n.introduction %}
+                                    <p>{% firstof n.listing_summary n.introduction %}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            {% include "patterns/molecules/pagination/pagination.html" with paginator_page=news %}
+        {% else %}
+            {# no items #}
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

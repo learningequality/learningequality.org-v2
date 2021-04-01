@@ -1,0 +1,23 @@
+.sidebar {
+    flex: 0 0 12rem;
+    margin-top: 20px;
+
+    @include media-query(medium) {
+        order: -1;
+        margin: 0 20px 0 0;
+    }
+
+    &--filters {
+        flex: 0 0 2rem;
+
+        @include media-query(medium) {
+            flex: 0 0 12rem;
+            order: initial;
+        }
+    }
+
+    &__inner {
+        padding: 20px;
+        background: $color--tertiary;
+    }
+}

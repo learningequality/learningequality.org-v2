@@ -1,0 +1,12 @@
+context:
+  call_to_action:
+    title: Stub content
+    summary: Check out our awesome stub content
+    get_link_text: Click here
+    get_link_url: '#'
+
+tags:
+  image:
+    call_to_action.image fill-450x300:
+      raw: |
+        <img src="https://source.unsplash.com/450x300?architecture" width="450" height="300" alt="Some alt">

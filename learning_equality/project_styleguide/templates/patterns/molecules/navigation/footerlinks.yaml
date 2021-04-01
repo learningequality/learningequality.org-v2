@@ -1,0 +1,10 @@
+context:
+  footerlinks:
+    - dummy
+    - dummy
+    - dummy
+
+tags:
+  include_block:
+    'link with nav_type="footerlinks-nav"':
+      template_name: 'patterns/molecules/navigation/blocks/menu_item.html'

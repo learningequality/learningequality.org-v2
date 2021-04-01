@@ -1,0 +1,23 @@
+[
+  {
+    "model": "utils.calltoactionsnippet",
+    "pk": 1,
+    "fields": {
+      "title": "Call To Action",
+      "summary": "<p>Sign up to Wagtail weekly for regular updates</p>",
+      "image": null,
+      "link": "[{\"type\": \"external_link\", \"value\": {\"url\": \"https://wagtail.io/\", \"title\": \"Wagtail\"}, \"id\": \"025aff07-6f71-453e-9bc3-9e23d9d3446c\"}]"
+    }
+  },
+  {
+    "model": "utils.socialmediasettings",
+    "pk": 1,
+    "fields": {
+      "site": ["localhost", 80],
+      "twitter_handle": "",
+      "facebook_app_id": "",
+      "default_sharing_text": "",
+      "site_name": "Wagtail Kit Dev Template"
+    }
+  }
+]

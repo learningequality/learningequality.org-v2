@@ -1,0 +1,7 @@
+FROM python:3.8-buster as backend
+
+RUN useradd -m learning_equality
+
+# any CLI installations needed for utility functions in containers can be provided here
+
+USER learning_equality
