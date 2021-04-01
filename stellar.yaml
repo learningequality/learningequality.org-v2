@@ -1,6 +1,0 @@
-logging: 30
-migrate_from_0_3_2: false
-project_name: learning_equality
-stellar_url: postgresql+psycopg2:///stellar_data
-tracked_databases: [learning_equality]
-url: postgresql+psycopg2:///template1
