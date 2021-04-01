@@ -1,22 +1,4 @@
 # Learning Equality Website Wagtail site
-
-## Technical documentation
-
-This project contains technical documentation written in Markdown in the `/docs` folder. This covers:
-
-- continuous integration
-- deployment
-- git branching
-- project conventions
-
-You can view it using `mkdocs` by running:
-
-```bash
-mkdocs serve
-```
-
-The documentation will be available at: http://localhost:8001/
-
 # Setting up a local build
 
 This repository includes `docker-compose` configuration for running the project in local Docker containers,
@@ -109,3 +91,19 @@ Python packages can be installed using poetry in the web container:
 fab sh-root
 poetry install wagtail-guide
 ```
+## Technical documentation
+
+This project contains technical documentation written in Markdown in the `/docs` folder. This covers:
+
+- continuous integration
+- deployment
+- git branching
+- project conventions
+
+You can view it using `mkdocs` by running:
+
+```bash
+mkdocs serve
+```
+
+The documentation will be available at: http://localhost:8001/

@@ -4,17 +4,13 @@
 
 ## Project overview
 
-- Who is the client?
-- What role does this project have? Is it an app, a CMS, any special functions?
-- Are there any project conventions?
+This is the project repo for the learning equality website. 
 
 To work on this project, see the README.
 
 ### External integrations
 
-List here any external services this project uses. Preferably link to a separate documentation page for each.
-
-Include any external credentials in the README.
+Currently none. TODO: decide on potential integrations with Stripe, Greenhouse, etc. 
 
 ## Adding documentation
 
