@@ -41,15 +41,6 @@ if "ALLOWED_HOSTS" in env:
 # Application definition
 
 INSTALLED_APPS = [
-    # This is an app that we use for the performance monitoring.
-    # You set configure it by setting the following environment variables:
-    #  * SCOUT_MONITOR="True"
-    #  * SCOUT_KEY="paste api key here"
-    #  * SCOUT_NAME="learning_equality"
-    # https://intranet.torchbox.com/delivering-projects/tech/scoutapp/
-    # According to the official docs, it's important that Scout is listed
-    # first - http://help.apm.scoutapp.com/#django.
-    "scout_apm.django",
     "learning_equality.documents",
     "learning_equality.forms",
     "learning_equality.home",
