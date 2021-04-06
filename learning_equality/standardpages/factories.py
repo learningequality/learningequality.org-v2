@@ -7,7 +7,6 @@ from .models import IndexPage, InformationPage
 
 faker = FakerFactory.create()
 
-
 class InformationPageFactory(wagtail_factories.PageFactory):
     class Meta:
         model = InformationPage
