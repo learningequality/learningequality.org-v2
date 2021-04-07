@@ -41,6 +41,7 @@ class PersonPageFactory(wagtail_factories.PageFactory):
     title = factory.LazyAttribute(lambda obj: f"{obj.first_name} {obj.last_name}")
     slug = factory.LazyAttribute(lambda obj: slugify(obj.title))
     job_title = factory.Faker("text", max_nb_chars=25)
+    pronouns = ("They/them")
     person_type = factory.LazyFunction(get_person_type)
     biography = factory.Faker("text", max_nb_chars=500)
     photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)

@@ -10,6 +10,7 @@ from wagtail.admin.edit_handlers import (
     StreamFieldPanel,
 )
 from wagtail.core.fields import StreamField
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from learning_equality.utils.blocks import StoryBlock
@@ -59,6 +60,7 @@ class PersonPage(BasePage):
     )
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    pronouns = models.CharField(max_length=255, blank=True)
 
     person_type = models.CharField(
         choices=PersonType.choices,
@@ -74,6 +76,7 @@ class PersonPage(BasePage):
         MultiFieldPanel(
             [FieldPanel("first_name"), FieldPanel("last_name")], heading="Name"
         ),
+        FieldPanel("pronouns"),
         ImageChooserPanel("photo"),
         FieldPanel("person_type"),
         FieldPanel("job_title"),
@@ -87,35 +90,47 @@ class PersonIndexPage(BasePage):
     subpage_types = ["PersonPage"]
     parent_page_types = ["home.HomePage"]
 
-    @cached_property
-    def people(self):
-        return PersonPage.objects.child_of(self).live().specific().live().public()
-        # return self.get_children().specific().live().public()
+    call_to_action = models.ForeignKey(
+        "utils.CallToActionSnippet",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    content_panels = BasePage.content_panels + [
+        SnippetChooserPanel("call_to_action"),
+    ]
 
     def get_context(self, request, *args, **kwargs):
-        page_number = request.GET.get("page")
-        paginator = Paginator(self.people, settings.DEFAULT_PER_PAGE)
-        people = (
-            PersonPage.objects.live()
-            .public()
-            .descendant_of(self)
-        )
+        people = PersonPage.objects.live().public().descendant_of(self)
 
-        if request.GET.get('person_type'):
-            if request.GET.get("person_type") == "all" or request.GET.get("person_type") is None:
+        # filter by person type
+        if request.GET.get("person_type"):
+            if (
+                request.GET.get("person_type") == "all"
+                or request.GET.get("person_type") is None
+            ):
                 pass
             else:
                 people = people.filter(person_type=request.GET.get("person_type"))
 
-        # try:
-        #     people = paginator.page(page_number)
-        # except PageNotAnInteger:
-        #     people = paginator.page(1)
-        # except EmptyPage:
-        #     people = paginator.page(paginator.num_pages)
+        # pagination; wrap the people results in the Django paginator
+        # see https://docs.djangoproject.com/en/3.1/topics/pagination/
+        paginator = Paginator(people, 2)
+        page_number = request.GET.get("page")
+
+        try:
+            # If the page exists and the ?page=x is an int
+            people = paginator.page(page_number)
+        except PageNotAnInteger:
+            # no page param, show first page
+            people = paginator.page(1)
+        except EmptyPage:
+            # page number out of range, show last page
+            people = paginator.page(paginator.num_pages)
 
         person_types = PersonType.choices
-
 
         context = super().get_context(request, *args, **kwargs)
         context.update(people=people, person_types=person_types)
