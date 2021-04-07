@@ -89,19 +89,35 @@ class PersonIndexPage(BasePage):
 
     @cached_property
     def people(self):
-        return self.get_children().specific().live().public()
+        return PersonPage.objects.child_of(self).live().specific().live().public()
+        # return self.get_children().specific().live().public()
 
     def get_context(self, request, *args, **kwargs):
         page_number = request.GET.get("page")
         paginator = Paginator(self.people, settings.DEFAULT_PER_PAGE)
-        try:
-            people = paginator.page(page_number)
-        except PageNotAnInteger:
-            people = paginator.page(1)
-        except EmptyPage:
-            people = paginator.page(paginator.num_pages)
+        people = (
+            PersonPage.objects.live()
+            .public()
+            .descendant_of(self)
+        )
+
+        if request.GET.get('person_type'):
+            if request.GET.get("person_type") == "all" or request.GET.get("person_type") is None:
+                pass
+            else:
+                people = people.filter(person_type=request.GET.get("person_type"))
+
+        # try:
+        #     people = paginator.page(page_number)
+        # except PageNotAnInteger:
+        #     people = paginator.page(1)
+        # except EmptyPage:
+        #     people = paginator.page(paginator.num_pages)
+
+        person_types = PersonType.choices
+
 
         context = super().get_context(request, *args, **kwargs)
-        context.update(people=people)
+        context.update(people=people, person_types=person_types)
 
         return context
