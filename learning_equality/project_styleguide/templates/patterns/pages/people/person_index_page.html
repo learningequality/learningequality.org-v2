@@ -1,6 +1,7 @@
 {% extends "patterns/base_page.html" %}
 {% load wagtailcore_tags wagtailimages_tags %}
 {% load wagtailcore_tags %}
+{% load debugger_tags %}
 
 {% block content %}
 
@@ -15,7 +16,9 @@
     <div class="main-body">
         <div class="container">
             <form method="GET">
+                {% if person_types|length > 2 %}
                     <a href="{{ self.url }}?person_type=all">All</a><br />
+                {% endif %}
                     {% for value, label in person_types %}
                         <a href="{{ self.url }}?person_type={{ value }}">{{ label }}</a><br />
                     {% endfor %}

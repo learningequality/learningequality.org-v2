@@ -65,7 +65,6 @@ class PersonPage(BasePage):
     person_type = models.CharField(
         choices=PersonType.choices,
         max_length=255,
-        null=True,
         blank=True,
     )
     job_title = models.CharField(max_length=255)
@@ -104,8 +103,14 @@ class PersonIndexPage(BasePage):
 
     def get_context(self, request, *args, **kwargs):
         people = PersonPage.objects.live().public().descendant_of(self)
+        selected_person_types = set(people.values_list("person_type", flat=True))
+        available_person_choices = [
+            choice
+            for choice in PersonType.choices
+            if choice[0] in selected_person_types
+        ]
 
-        # filter by person type
+        # filter by person type if it exists as a URL query parameter
         if request.GET.get("person_type"):
             if (
                 request.GET.get("person_type") == "all"
@@ -117,7 +122,7 @@ class PersonIndexPage(BasePage):
 
         # pagination; wrap the people results in the Django paginator
         # see https://docs.djangoproject.com/en/3.1/topics/pagination/
-        paginator = Paginator(people, 2)
+        paginator = Paginator(people, 25)
         page_number = request.GET.get("page")
 
         try:
@@ -130,9 +135,7 @@ class PersonIndexPage(BasePage):
             # page number out of range, show last page
             people = paginator.page(paginator.num_pages)
 
-        person_types = PersonType.choices
-
         context = super().get_context(request, *args, **kwargs)
-        context.update(people=people, person_types=person_types)
+        context.update(people=people, person_types=available_person_choices)
 
         return context

@@ -14,3 +14,5 @@ class PersonType(TextChoices):
     UX = "UX", "UX Design & Research"
     COMMUNICATIONS = "communications", "Communications"
     OPERATIONS = "operations", "Team Operations"
+    BOARD = "board", "Board of directors"
+    ADVISORS = "advisory", "Advisory Board"
