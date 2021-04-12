@@ -1,3 +1,6 @@
+PORT:=8000
+WEB_CONCURRENCY:=3
+
 migrate:										## 🚚 - Remote into local cms container and run python makemigrations migrate
 	docker-compose exec cms bash -c 'python3 manage.py makemigrations'
 	docker-compose exec cms bash -c 'python3 manage.py migrate'
@@ -12,3 +15,6 @@ stop:											## 🛑 - Stop all running containers
 
 terminal:										## 🎛  - Remote into local cms container
 	docker-compose exec cms /bin/sh
+
+startprod: ## devops requests a make command that calls gunicorn directly
+    gunicorn learning_equality.wsgi:application -c gunicorn-conf.py --max-requests 1200 --max-requests-jitter 50 --access-logfile - --timeout 25
