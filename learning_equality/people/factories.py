@@ -1,3 +1,4 @@
+import pdb
 import factory
 import wagtail_factories
 from faker import Factory as FakerFactory
@@ -5,26 +6,16 @@ from faker import Faker
 from django.utils.text import slugify
 import random
 
-from .models import TeamMemberIndexPage, TeamMemberPage
-from .choices import PersonType
+from learning_equality.home.models import HomePage
+from .models import TeamMemberIndexPage, TeamMemberPage, BoardMember, BoardPage
+from .choices import PersonType, BoardPersonType
 
 faker = FakerFactory.create()
 
 
 """
-example cli usage:
-factories.PersonPageFactory(parent=PersonIndexPage.objects.first())
-factories.PersonPageFactory.create_batch(10, parent=PersonIndexPage.objects.first())
-
-you'll want to give the factory-created page a parent, in this case we're assuming a parent page is created already
-
+See generate() for example usage
 """
-
-
-def get_person_type():
-    "Return a random person type from available choices."
-    person_type_choices = [x[0] for x in PersonType.choices]
-    return random.choice(person_type_choices)
 
 
 class TeamMemberPageFactory(wagtail_factories.PageFactory):
@@ -38,7 +29,7 @@ class TeamMemberPageFactory(wagtail_factories.PageFactory):
     slug = factory.LazyAttribute(lambda obj: slugify(obj.title))
     job_title = factory.Faker("text", max_nb_chars=25)
     pronouns = "They/them"
-    person_type = factory.LazyFunction(get_person_type)
+    person_type = random.choice(PersonType.values)
     biography = factory.Faker("text", max_nb_chars=500)
     photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)
 
@@ -48,3 +39,33 @@ class TeamMemberIndexPageFactory(wagtail_factories.PageFactory):
         model = TeamMemberIndexPage
 
     title = factory.Faker("text", max_nb_chars=25)
+
+    @factory.post_generation
+    def add_team_members(self, create, extracted, **kwargs):
+        if create:
+            TeamMemberPageFactory.create_batch(size=25, parent=self)
+
+
+class BoardPageFactory(wagtail_factories.PageFactory):
+
+    class Meta:
+        model = BoardPage
+
+    @factory.post_generation
+    def add_board_members(self, create, extracted, **kwargs):
+        if create:
+            BoardMemberFactory.create_batch(size=12, page=self)
+
+class BoardMemberFactory(factory.django.DjangoModelFactory):
+    page = factory.SubFactory('learning_equality.people.factories.BoardPageFactory')
+    title = factory.Faker("name")
+    biography = factory.Faker("text", max_nb_chars=500)
+    person_type = random.choice(BoardPersonType.values)
+    photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)
+    class Meta:
+        model = BoardMember
+
+def generate():
+    home_page = HomePage.objects.first()
+    BoardPageFactory(title="Our Board", parent=home_page)
+    TeamMemberIndexPageFactory(title="Our Team", parent=home_page)

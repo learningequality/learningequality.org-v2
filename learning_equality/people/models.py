@@ -108,6 +108,7 @@ class TeamMemberIndexPage(BasePage):
         # for category filters, only show the values actually selected
         # in practice, this shouldn't be an issue (assuming there is at least one team member for every category)
         selected_person_types = set(people.values_list("person_type", flat=True))
+
         available_person_choices = [
             choice
             for choice in PersonType.choices
@@ -151,6 +152,7 @@ class BoardPage(BasePage):
     There are fewer board members, and their information is displayed inline on the index page
     (technically it isn't an index page at all)
     """
+
     template = "patterns/pages/people/board_page.html"
     content_panels = BasePage.content_panels + [
         InlinePanel("board_members", label="Board Members"),
@@ -177,7 +179,7 @@ class BoardPage(BasePage):
         return context
 
 
-class BoardMembers(Orderable):
+class BoardMember(Orderable):
     page = ParentalKey(BoardPage, related_name="board_members")
     person_type = models.CharField(
         choices=BoardPersonType.choices,
@@ -197,3 +199,9 @@ class BoardMembers(Orderable):
     biography = models.TextField(
         blank=True,
     )
+    panels = [
+        FieldPanel("title"),
+        ImageChooserPanel("photo"),
+        FieldPanel("person_type"),
+        FieldPanel("biography"),
+    ]
