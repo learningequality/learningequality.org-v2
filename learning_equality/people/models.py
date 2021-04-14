@@ -116,14 +116,9 @@ class TeamMemberIndexPage(BasePage):
         ]
 
         # filter by person type if it exists as a URL query parameter
-        if request.GET.get("person_type"):
-            if (
-                request.GET.get("person_type") == "all"
-                or request.GET.get("person_type") is None
-            ):
-                pass
-            else:
-                people = people.filter(person_type=request.GET.get("person_type"))
+        if request.GET.get("person_type") and request.GET.get("person_type") != "all":
+            people = people.filter(person_type=request.GET.get("person_type"))
+
 
         # pagination; wrap the people results in the Django paginator
         # see https://docs.djangoproject.com/en/3.1/topics/pagination/
@@ -161,15 +156,7 @@ class BoardPage(BasePage):
     def get_context(self, request, *args, **kwargs):
         # filter by person type if it exists as a URL query parameter, return board of directors by default
         if request.GET.get("person_type"):
-            if (
-                request.GET.get("person_type") == "all"
-                or request.GET.get("person_type") is None
-            ):
-                people = self.board_members.filter(person_type="board")
-            else:
-                people = self.board_members.filter(
-                    person_type=request.GET.get("person_type")
-                )
+            people = self.board_members.filter(person_type=request.GET.get("person_type"))
         else:
             people = self.board_members.filter(person_type="board")
 

@@ -19,10 +19,10 @@
     <div class="container">
                 <form method="GET">
                 {% if person_types|length > 2 %}
-                    <a href="{{ self.url }}?person_type=all">All</a><br />
+                    <a href="?person_type=all">All</a><br />
                 {% endif %}
                     {% for value, label in person_types %}
-                        <a href="{{ self.url }}?person_type={{ value }}">{{ label }}</a><br />
+                        <a href="?person_type={{ value|urlencode }}">{{ label }}</a><br />
                     {% endfor %}
             </form>
                 {% for board_member in people %}
