@@ -16,3 +16,11 @@ class PersonType(TextChoices):
     OPERATIONS = "operations", "Team Operations"
     BOARD = "board", "Board of directors"
     ADVISORS = "advisory", "Advisory Board"
+
+class BoardPersonType(TextChoices):
+    """
+    categories for board members
+    """
+    BOARD = "board", "Board of directors"
+    ADVISORS = "advisory", "Advisory Board"
+

@@ -10,16 +10,18 @@ from wagtail.admin.edit_handlers import (
     StreamFieldPanel,
 )
 from wagtail.core.fields import StreamField
+from wagtail.core.models import Orderable
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 
 from learning_equality.utils.blocks import StoryBlock
-from learning_equality.utils.models import BasePage
-from .choices import PersonType
+from learning_equality.utils.models import BasePage, ListingFields
+
+from .choices import PersonType, BoardPersonType
 
 
 class SocialMediaProfile(models.Model):
-    person_page = ParentalKey("PersonPage", related_name="social_media_profile")
+    person_page = ParentalKey("TeamMemberPage", related_name="social_media_profile")
     site_titles = (("twitter", "Twitter"), ("linkedin", "LinkedIn"))
     site_urls = (
         ("twitter", "https://twitter.com/"),
@@ -38,15 +40,15 @@ class SocialMediaProfile(models.Model):
 
 
 class PersonPagePhoneNumber(models.Model):
-    page = ParentalKey("PersonPage", related_name="phone_numbers")
+    page = ParentalKey("TeamMemberPage", related_name="phone_numbers")
     phone_number = models.CharField(max_length=255)
 
     panels = [FieldPanel("phone_number")]
 
 
-class PersonPage(BasePage):
+class TeamMemberPage(BasePage):
 
-    template = "patterns/pages/people/person_page.html"
+    template = "patterns/pages/people/team_member_page.html"
 
     subpage_types = []
     parent_page_types = ["PersonIndexPage"]
@@ -83,8 +85,8 @@ class PersonPage(BasePage):
     ]
 
 
-class PersonIndexPage(BasePage):
-    template = "patterns/pages/people/person_index_page.html"
+class TeamMemberIndexPage(BasePage):
+    template = "patterns/pages/people/team_member_index_page.html"
 
     subpage_types = ["PersonPage"]
     parent_page_types = ["home.HomePage"]
@@ -102,7 +104,9 @@ class PersonIndexPage(BasePage):
     ]
 
     def get_context(self, request, *args, **kwargs):
-        people = PersonPage.objects.live().public().descendant_of(self)
+        people = TeamMemberPage.objects.live().public().descendant_of(self)
+        # for category filters, only show the values actually selected
+        # in practice, this shouldn't be an issue (assuming there is at least one team member for every category)
         selected_person_types = set(people.values_list("person_type", flat=True))
         available_person_choices = [
             choice
@@ -139,3 +143,57 @@ class PersonIndexPage(BasePage):
         context.update(people=people, person_types=available_person_choices)
 
         return context
+
+
+class BoardPage(BasePage):
+    """
+    A board page is a more specific kind of person page.
+    There are fewer board members, and their information is displayed inline on the index page
+    (technically it isn't an index page at all)
+    """
+    template = "patterns/pages/people/board_page.html"
+    content_panels = BasePage.content_panels + [
+        InlinePanel("board_members", label="Board Members"),
+    ]
+
+    def get_context(self, request, *args, **kwargs):
+        # filter by person type if it exists as a URL query parameter, return board of directors by default
+        if request.GET.get("person_type"):
+            if (
+                request.GET.get("person_type") == "all"
+                or request.GET.get("person_type") is None
+            ):
+                people = self.board_members.filter(person_type="board")
+            else:
+                people = self.board_members.filter(
+                    person_type=request.GET.get("person_type")
+                )
+        else:
+            people = self.board_members.filter(person_type="board")
+
+        context = super().get_context(request, *args, **kwargs)
+        context.update(people=people, person_types=BoardPersonType.choices)
+
+        return context
+
+
+class BoardMembers(Orderable):
+    page = ParentalKey(BoardPage, related_name="board_members")
+    person_type = models.CharField(
+        choices=BoardPersonType.choices,
+        max_length=255,
+    )
+    photo = models.ForeignKey(
+        "images.CustomImage",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+    )
+    biography = models.TextField(
+        blank=True,
+    )

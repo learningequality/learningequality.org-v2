@@ -5,7 +5,7 @@ from faker import Faker
 from django.utils.text import slugify
 import random
 
-from .models import PersonIndexPage, PersonPage
+from .models import TeamMemberIndexPage, TeamMemberPage
 from .choices import PersonType
 
 faker = FakerFactory.create()
@@ -27,9 +27,9 @@ def get_person_type():
     return random.choice(person_type_choices)
 
 
-class PersonPageFactory(wagtail_factories.PageFactory):
+class TeamMemberPageFactory(wagtail_factories.PageFactory):
     class Meta:
-        model = PersonPage
+        model = TeamMemberPage
 
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
@@ -43,8 +43,8 @@ class PersonPageFactory(wagtail_factories.PageFactory):
     photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)
 
 
-class PersonIndexPageFactory(wagtail_factories.PageFactory):
+class TeamMemberIndexPageFactory(wagtail_factories.PageFactory):
     class Meta:
-        model = PersonIndexPage
+        model = TeamMemberIndexPage
 
     title = factory.Faker("text", max_nb_chars=25)
