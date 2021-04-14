@@ -1,10 +1,9 @@
-import pdb
 import factory
+import factory.fuzzy
 import wagtail_factories
 from faker import Factory as FakerFactory
-from faker import Faker
 from django.utils.text import slugify
-import random
+
 
 from learning_equality.home.models import HomePage
 from .models import TeamMemberIndexPage, TeamMemberPage, BoardMember, BoardPage
@@ -29,7 +28,7 @@ class TeamMemberPageFactory(wagtail_factories.PageFactory):
     slug = factory.LazyAttribute(lambda obj: slugify(obj.title))
     job_title = factory.Faker("text", max_nb_chars=25)
     pronouns = "They/them"
-    person_type = random.choice(PersonType.values)
+    person_type = factory.fuzzy.FuzzyChoice(PersonType.values)
     biography = factory.Faker("text", max_nb_chars=500)
     photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)
 
@@ -47,7 +46,6 @@ class TeamMemberIndexPageFactory(wagtail_factories.PageFactory):
 
 
 class BoardPageFactory(wagtail_factories.PageFactory):
-
     class Meta:
         model = BoardPage
 
@@ -56,14 +54,17 @@ class BoardPageFactory(wagtail_factories.PageFactory):
         if create:
             BoardMemberFactory.create_batch(size=12, page=self)
 
+
 class BoardMemberFactory(factory.django.DjangoModelFactory):
-    page = factory.SubFactory('learning_equality.people.factories.BoardPageFactory')
+    page = factory.SubFactory("learning_equality.people.factories.BoardPageFactory")
     title = factory.Faker("name")
     biography = factory.Faker("text", max_nb_chars=500)
-    person_type = random.choice(BoardPersonType.values)
+    person_type = factory.fuzzy.FuzzyChoice(BoardPersonType.values)
     photo = factory.SubFactory(wagtail_factories.ImageChooserBlockFactory)
+
     class Meta:
         model = BoardMember
+
 
 def generate():
     home_page = HomePage.objects.first()
