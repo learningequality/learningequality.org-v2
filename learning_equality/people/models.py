@@ -51,7 +51,7 @@ class TeamMemberPage(BasePage):
     template = "patterns/pages/people/team_member_page.html"
 
     subpage_types = []
-    parent_page_types = ["PersonIndexPage"]
+    parent_page_types = ["TeamMemberIndexPage"]
 
     photo = models.ForeignKey(
         "images.CustomImage",
@@ -88,7 +88,7 @@ class TeamMemberPage(BasePage):
 class TeamMemberIndexPage(BasePage):
     template = "patterns/pages/people/team_member_index_page.html"
 
-    subpage_types = ["PersonPage"]
+    subpage_types = ["TeamMemberPage"]
     parent_page_types = ["home.HomePage"]
 
     call_to_action = models.ForeignKey(
