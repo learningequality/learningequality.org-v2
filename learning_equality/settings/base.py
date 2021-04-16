@@ -42,6 +42,7 @@ if "ALLOWED_HOSTS" in env:
 
 INSTALLED_APPS = [
     'wagtail.locales',
+    "learning_equality.careers",
     "learning_equality.documents",
     "learning_equality.forms",
     "learning_equality.home",
