@@ -1,0 +1,41 @@
+{% extends "patterns/base_page.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% load debugger_tags %}
+
+{% block content %}
+
+<div class="wrapper wrapper--small">
+
+    <div class="intro">
+        <div class="container">
+            <h1>{{ page.title }}</h1>
+        </div>
+    </div>
+
+    <div class="main-body">
+
+
+    <div class="container">
+                <form method="GET">
+                {% if person_types|length > 2 %}
+                    <a href="?person_type=all">All</a><br />
+                {% endif %}
+                    {% for value, label in person_types %}
+                        <a href="?person_type={{ value|urlencode }}">{{ label }}</a><br />
+                    {% endfor %}
+            </form>
+                {% for board_member in people %}
+                    <div class="person">
+                        {% if board_member.photo %}
+                            {% image board_member.photo max-360x360 %}
+                        {% endif %}
+                        {{ board_member.title }}
+                        {{ board_member.biography }}
+                    </div>
+                {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

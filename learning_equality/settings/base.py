@@ -41,6 +41,7 @@ if "ALLOWED_HOSTS" in env:
 # Application definition
 
 INSTALLED_APPS = [
+    'wagtail.locales',
     "learning_equality.documents",
     "learning_equality.forms",
     "learning_equality.home",
@@ -195,7 +196,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/stable/topics/i18n/
 
-LANGUAGE_CODE = "en-gb"
+LANGUAGE_CODE = "en-US"
 
 TIME_ZONE = "Europe/London"
 

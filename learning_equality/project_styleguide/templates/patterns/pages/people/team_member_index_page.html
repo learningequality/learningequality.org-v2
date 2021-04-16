@@ -1,0 +1,46 @@
+{% extends "patterns/base_page.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% comment %} {% load debugger_tags %} {% endcomment %}
+
+{% block content %}
+
+<div class="wrapper wrapper--small">
+
+    <div class="intro">
+        <div class="container">
+            <h1>{{ page.title }}</h1>
+        </div>
+    </div>
+
+    <div class="main-body">
+        <div class="container">
+            <form method="GET">
+                {% if person_types|length > 2 %}
+                    <a href="?person_type=all">All</a><br />
+                {% endif %}
+                    {% for value, label in person_types %}
+                        <a href="?person_type={{ value|urlencode }}">{{ label }}</a><br />
+                    {% endfor %}
+            </form>
+            {% if people %}
+                {% for person in people %}
+                    <div class="person">
+                        {% if person.photo %}
+                            {% image person.photo max-360x360 %}
+                        {% endif %}
+                        <h2><a href="{% pageurl person %}">{{ person.first_name }} {{ person.last_name }}</a></h2>
+                        {{ person.job_title }}
+                    </div>
+                {% endfor %}
+
+                {% include "patterns/molecules/pagination/pagination.html" with paginator_page=people %}
+            {% else %}
+                {# no results #}
+            {% endif %}
+            {% include "patterns/molecules/cta/call_to_action.html" with call_to_action=page.call_to_action %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

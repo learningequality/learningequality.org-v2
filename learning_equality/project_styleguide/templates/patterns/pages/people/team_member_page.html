@@ -1,7 +1,6 @@
 {% extends "patterns/base_page.html" %}
 
 {% load wagtailcore_tags wagtailimages_tags %}
-
 {% block content %}
 
 <div class="section section--main">
@@ -58,7 +57,7 @@
             </div>
         {% endif %}
     {% endwith %}
-
+    {% include "patterns/molecules/cta/call_to_action.html" with call_to_action=page.get_parent.specific.call_to_action %}
 </div>
 
 {% endblock %}
