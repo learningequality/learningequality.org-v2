@@ -1,0 +1,35 @@
+{% extends "patterns/base_page.html" %}
+{% load wagtailcore_tags wagtailimages_tags navigation_tags static %}
+{% load debugger_tags %}
+{% block content %}
+    <h1>{{ page.title }}</h1>
+    {{ page.introduction|richtext }}
+    <h2>{{ page.testimonial_section_header.title }}</h2>
+    {% for testimonial in page.testimonials.all %}
+        <blockquote>
+            <p>{{ testimonial.quote }}</p>
+        </blockquote>
+        <a href="{% pageurl testimonial.author %}">
+            {% image testimonial.author.specific.photo fill-80x80 %}
+            {{ testimonial.author }}
+        </a>
+    {% endfor %}
+    <h2>{{ page.perks_section_header.title }}</h2>
+    {% for perk in page.perks.all %}
+        <section class="grid" aria-labelledby="related-content-heading">
+            <div class="card">
+                {% image perk.image width-350 %}
+                {{ perk.title }}
+                {{ perk.description }}
+            </div>
+        </section>
+    {% endfor %}
+    {% include "patterns/molecules/carousel/carousel.html" with carousel=page.carousel_images.all %}
+    {% comment %}
+        example embed from existing site:
+    {% endcomment %}
+    <div id="grnhse_app">
+        <i>Please wait, job information is loading...</i>
+    </div>
+    <script src="https://boards.greenhouse.io/embed/job_board/js?for=learningequality"></script>
+{% endblock %}
